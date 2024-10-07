@@ -3,7 +3,8 @@ import UserModel from "@/model/User.model";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helper/sendVerificationEmail";
 
-async function POST(request: Request) {
+export async function POST(request: Request) {
+  dbConnect();
   try {
     const { username, email, password } = await request.json();
 
