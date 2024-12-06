@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
         try {
           // TODO: log credentials
           const user = await UserModel.findOne({
-            $or: [{ email: credentials.identifier.identifier }, { username: credentials.identifier.identifier }],
+            $or: [{ email: credentials.identifier }, { username: credentials.identifier }],
           });
 
           if (!user) {
@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Please verify your email before signin");
           }
 
-          const isPasswordCorrect = await bcrypt.compare(credentials.identifier.password, user.password);
+          const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
 
           if (!isPasswordCorrect) {
             throw new Error("Incorrect Password");
