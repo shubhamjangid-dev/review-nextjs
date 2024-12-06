@@ -16,7 +16,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-const page = () => {
+const Page = () => {
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
     defaultValues: {
@@ -173,4 +173,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

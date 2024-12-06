@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { ApiResponse } from "@/types/ApiResponse";
 
-const page = () => {
+const Page = () => {
   const prams = useParams<{ username: string }>();
   const router = useRouter();
   const { toast } = useToast();
@@ -119,4 +119,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
