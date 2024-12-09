@@ -10,7 +10,6 @@ import axios, { AxiosError } from "axios";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { ApiResponse } from "@/types/ApiResponse";
 
@@ -44,10 +43,9 @@ const Page = () => {
     } catch (error) {
       console.log("error ", error);
       const axiosError = error as AxiosError<ApiResponse>;
-      let errorMessage = axiosError.response?.data.message;
       toast({
         title: "Verification Failed",
-        description: errorMessage,
+        description: axiosError.response?.data.message,
         variant: "destructive",
       });
     } finally {

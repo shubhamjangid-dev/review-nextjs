@@ -1,5 +1,4 @@
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import axios, { AxiosError } from "axios";
@@ -17,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
-function page() {
+function Page() {
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingusername, setIsCheckingUsername] = useState(false);
@@ -70,10 +69,9 @@ function page() {
     } catch (error) {
       console.log("ERROR :: sign up of user :: ");
       const axiosError = error as AxiosError<ApiResponse>;
-      let errorMessage = axiosError.response?.data.message;
       toast({
         title: "SignUp Failed",
-        description: errorMessage,
+        description: axiosError.response?.data.message,
         variant: "destructive",
       });
       setIsSubmitting(false);
@@ -178,4 +176,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

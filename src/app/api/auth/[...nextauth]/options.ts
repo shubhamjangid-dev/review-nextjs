@@ -13,13 +13,19 @@ export const authOptions: NextAuthOptions = {
         identifier: { label: "Email Or Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials: any): Promise<any> {
+      async authorize(credentials?: { identifier: string; password: string }): Promise<any> {
+        if (!credentials?.identifier || !credentials?.password) {
+          throw new Error("Invalid credentials");
+        }
+
+        const { identifier, password } = credentials;
+
         await dbConnect();
 
         try {
           // TODO: log credentials
           const user = await UserModel.findOne({
-            $or: [{ email: credentials.identifier }, { username: credentials.identifier }],
+            $or: [{ email: identifier }, { username: identifier }],
           });
 
           if (!user) {
@@ -30,14 +36,21 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Please verify your email before signin");
           }
 
-          const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
+          const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
           if (!isPasswordCorrect) {
             throw new Error("Incorrect Password");
           }
-          return user;
-        } catch (error: any) {
-          throw new Error(error);
+          return {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            isVerified: user.isVerified,
+            isAcceptingMessages: user.isAcceptingMessages,
+          };
+        } catch (error: unknown) {
+          console.error("Authentication error:", error);
+          throw error instanceof Error ? error : new Error("Authentication failed");
         }
       },
     }),

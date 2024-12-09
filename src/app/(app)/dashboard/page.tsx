@@ -51,7 +51,7 @@ const Page = () => {
     } finally {
       setIsSwitchLoading(false);
     }
-  }, [setValue]);
+  }, [setValue, toast]);
 
   const fetchMessages = useCallback(
     async (refresh: boolean = false) => {
@@ -112,7 +112,7 @@ const Page = () => {
   const username = session?.user.username;
 
   // TODO: research on how to get url like https://shubhamjangir.in  in different waya
-  const profileUrl = `${window.location.origin}/u/${username}`;
+  const profileUrl = `review.shubhamjangir.in/u/${username}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
@@ -162,7 +162,7 @@ const Page = () => {
       </Button>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
         {messages.length > 0 ? (
-          messages.map((message, index) => (
+          messages.map(message => (
             <MessageCard
               key={message._id as string}
               message={message}

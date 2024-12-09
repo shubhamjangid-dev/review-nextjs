@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,7 @@ import { Message } from "@/model/User.model";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
-import { Trash, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 type MessageCardProps = {
   message: Message;

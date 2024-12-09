@@ -3,9 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import UserModel from "@/model/User.model";
 import mongoose from "mongoose";
-import { group } from "console";
 
-export async function GET(request: Request) {
+export async function GET() {
   await dbConnect();
   const session = await getServerSession(authOptions);
 

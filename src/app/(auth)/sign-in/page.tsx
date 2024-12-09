@@ -1,8 +1,7 @@
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
+import { signIn } from "next-auth/react";
+import React, { useState } from "react";
 import * as z from "zod";
-import axios, { AxiosError } from "axios";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -31,6 +30,7 @@ function Page() {
   });
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+    setIsSubmitting(true);
     const response = await signIn("credentials", {
       redirect: false,
       identifier: data.identifier,
@@ -52,7 +52,7 @@ function Page() {
         });
       }
     }
-
+    setIsSubmitting(false);
     if (response?.url) {
       router.replace("/dashboard");
     }

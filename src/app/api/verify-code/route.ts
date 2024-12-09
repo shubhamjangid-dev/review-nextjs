@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   await dbConnect();
 
   try {
-    const { username, email, verificationCode } = await request.json();
+    const { username, verificationCode } = await request.json();
 
     const decodedUsername = decodeURIComponent(username); // decode krlo username ko.ex space ki jagah %20 na ho
 
