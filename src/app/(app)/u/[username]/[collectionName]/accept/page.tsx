@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -25,7 +25,10 @@ const Page = () => {
   });
   const messageContent = form.watch("content");
   const { toast } = useToast();
-  const { username } = useParams<{ username: string }>();
+  const { username, collectionName } = useParams<{ username: string; collectionName: string }>();
+  const searchParams = useSearchParams();
+  const link = searchParams.get("token");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestedMessages, setSuggestedMessages] = useState(["Which is your favorite movie?", "Do you have any pets?", "What's your dream job?"]);
@@ -36,12 +39,15 @@ const Page = () => {
       const response = await axios.post("/api/send-message", {
         messageContent: data.content,
         username,
+        collectionName,
+        link,
       });
       toast({
         title: "Success",
         description: response.data.message,
         variant: "success",
       });
+      form.reset();
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast({

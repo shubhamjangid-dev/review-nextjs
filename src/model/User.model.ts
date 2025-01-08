@@ -1,21 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
-
-export interface Message extends Document {
-  content: string;
-  createdAt: Date;
-}
-
-const MessageSchema: Schema<Message> = new Schema({
-  content: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
-});
+import mongoose, { Types, Schema, Document } from "mongoose";
 
 export interface User extends Document {
   username: string;
@@ -24,8 +7,7 @@ export interface User extends Document {
   verificationCode: string;
   verificationCodeExpiry: Date;
   isVerified: boolean;
-  messages: Message[];
-  isAcceptingMessages: boolean;
+  collections: Types.ObjectId[];
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -58,11 +40,7 @@ const UserSchema: Schema<User> = new Schema({
     type: Boolean,
     default: false,
   },
-  messages: [MessageSchema],
-  isAcceptingMessages: {
-    type: Boolean,
-    default: true,
-  },
+  collections: [{ type: Schema.Types.ObjectId, ref: "Collection" }],
 });
 
 const UserModel = (mongoose.models.User as mongoose.Model<User>) || mongoose.model<User>("User", UserSchema);

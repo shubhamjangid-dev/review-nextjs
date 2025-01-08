@@ -1,14 +1,15 @@
 import dbConnect from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/options";
 import UserModel from "@/model/User.model";
 import { CollectionModel } from "@/model/Collection.model";
+import { authOptions } from "../../auth/[...nextauth]/options";
+import mongoose from "mongoose";
 
-type reqParams = { params: { messageId: string; collectionId: string } };
+type reqParams = { params: { collectionId: string } };
 
 export async function DELETE(request: Request, { params }: reqParams) {
   const resolvedParams = await params; // Resolve the Promise
-  const { messageId, collectionId } = resolvedParams;
+  const { collectionId } = resolvedParams;
 
   await dbConnect();
   const session = await getServerSession(authOptions);
@@ -27,47 +28,46 @@ export async function DELETE(request: Request, { params }: reqParams) {
   const userId = session.user._id;
 
   try {
-    const currUser = await UserModel.findOne({ _id: userId, collections: collectionId });
+    const currUser = await UserModel.updateOne({ _id: userId }, { $pull: { collections: new mongoose.Types.ObjectId(collectionId) } });
     if (!currUser) {
       return Response.json(
         {
           success: false,
-          message: "Message does not belong to the user",
+          message: "Collection not belongs to user",
         },
         {
           status: 401,
         }
       );
     }
-    const updatedCollection = await CollectionModel.updateOne({ _id: collectionId }, { $pull: { messages: { _id: messageId } } });
+    const updatedCollection = await CollectionModel.findByIdAndDelete(collectionId);
 
-    if (updatedCollection.modifiedCount === 0) {
+    if (!updatedCollection) {
       return Response.json(
         {
-          success: true,
-          message: "Message not found or already deleted",
+          success: false,
+          message: "Collection not found or already deleted",
         },
         {
-          status: 404,
+          status: 401,
         }
       );
     }
-
     return Response.json(
       {
         success: true,
-        message: "Message deleted successfully",
+        message: "Collection deleted successfully",
       },
       {
         status: 201,
       }
     );
   } catch (error) {
-    console.error("ERROR : Failed to delete message ::", error);
+    console.error("ERROR : Failed to delete collection ::", error);
     return Response.json(
       {
         success: false,
-        message: "Failed to delete message",
+        message: "Failed to delete collection",
       },
       {
         status: 501,

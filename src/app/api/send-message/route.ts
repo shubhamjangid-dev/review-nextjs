@@ -1,20 +1,20 @@
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User.model";
-import { Message } from "@/model/User.model";
+import { CollectionModel, Message } from "@/model/Collection.model";
 
 export async function POST(request: Request) {
   await dbConnect();
 
   try {
-    const { username, messageContent } = await request.json();
+    const { username, link, messageContent } = await request.json();
 
-    const user = await UserModel.findOne({ username });
+    const collection = await CollectionModel.findOne({ messageAcceptingLink: link });
 
-    if (!user) {
+    if (!collection) {
       return Response.json(
         {
           success: false,
-          message: "User Not Found",
+          message: "Invalid or expired link ",
         },
         {
           status: 404,
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!user.isAcceptingMessages) {
+    if (!collection.isAcceptingMessages) {
       return Response.json(
         {
           success: false,
@@ -39,8 +39,8 @@ export async function POST(request: Request) {
       createdAt: new Date(),
     };
 
-    user.messages.push(newMessage as Message);
-    await user.save();
+    collection.messages.push(newMessage as Message);
+    await collection.save();
 
     return Response.json(
       {

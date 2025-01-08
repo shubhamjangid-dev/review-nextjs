@@ -2,6 +2,8 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
+import mongoose from "mongoose";
+import { CollectionModel } from "@/model/Collection.model";
 
 export async function POST(request: Request) {
   await dbConnect();
@@ -24,12 +26,24 @@ export async function POST(request: Request) {
   const userId = user?._id;
 
   try {
-    const { isAcceptingMessages } = await request.json();
+    const { isAcceptingMessages, collectionId } = await request.json();
 
-    const updatedUser = await UserModel.findByIdAndUpdate(userId, {
-      isAcceptingMessages,
-    });
-    if (!updatedUser) {
+    const currUser = await UserModel.findOne({ _id: userId, collections: collectionId });
+    if (!currUser) {
+      return Response.json(
+        {
+          success: false,
+          message: "Collection does not belong to the user",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    const updatedCollection = await CollectionModel.findByIdAndUpdate(collectionId, { $set: { isAcceptingMessages } }, { new: true });
+
+    if (!updatedCollection) {
       return Response.json(
         {
           success: false,
@@ -45,7 +59,7 @@ export async function POST(request: Request) {
       {
         success: true,
         message: "isAccespingMessages is updated successfully",
-        updatedUser,
+        updatedCollection,
       },
       {
         status: 201,
@@ -65,7 +79,9 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const collectionId = searchParams.get("collectionId");
   await dbConnect();
   const session = await getServerSession(authOptions);
 
@@ -85,25 +101,32 @@ export async function GET() {
 
   const userId = user?._id;
   try {
-    const user = await UserModel.findById(userId);
-
-    if (!user) {
+    const currUser = await UserModel.findOne({ _id: userId, collections: collectionId });
+    if (!currUser) {
       return Response.json(
         {
           success: false,
-          message: "User Not Found",
+          message: "Collection does not belong to the user",
         },
         {
-          status: 400,
+          status: 401,
         }
       );
     }
 
+    const currCollection = await CollectionModel.findById(collectionId);
+
+    if (!currCollection) {
+      return {
+        success: false,
+        message: "Collection not found",
+      };
+    }
     return Response.json(
       {
         success: true,
         message: "isAcceptingMessages fetched successfully",
-        isAcceptingMessages: user.isAcceptingMessages,
+        isAcceptingMessages: currCollection.isAcceptingMessages,
       },
       {
         status: 200,

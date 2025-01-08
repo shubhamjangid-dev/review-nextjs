@@ -1,6 +1,6 @@
 "use client";
 import { useToast } from "@/hooks/use-toast";
-import { Message } from "@/model/User.model";
+import { Collection } from "@/model/Collection.model";
 import { acceptMessageSchema } from "@/schamas/acceptMessageSchema";
 import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,111 +14,62 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Loader2, RefreshCcw } from "lucide-react";
 import MessageCard from "@/components/MessageCard";
+import CollectionCard from "@/components/CollectionCard";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const [collectionName, setCollectionName] = useState("");
 
   const { toast } = useToast();
+  const router = useRouter();
 
-  const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter(message => message._id !== messageId));
+  const handleDeleteCollection = (collectionId: string) => {
+    setCollections(collections.filter(collection => collection._id !== collectionId));
   };
 
   const { data: session } = useSession();
 
-  const form = useForm({
-    resolver: zodResolver(acceptMessageSchema),
-  });
-
-  const { register, watch, setValue } = form;
-
-  const acceptMessages = watch("acceptMessages");
-
-  const fetchAcceptMessage = useCallback(async () => {
-    setIsSwitchLoading(true);
-    try {
-      const response = await axios.get<ApiResponse>("/api/accept-messages");
-      setValue("acceptMessages", response.data.isAcceptingMessages);
-    } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
-      toast({
-        title: "Error",
-        description: axiosError.response?.data.message || "Failed to fetch message settings",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSwitchLoading(false);
-    }
-  }, [setValue, toast]);
-
-  const fetchMessages = useCallback(
+  const fetchCollections = useCallback(
     async (refresh: boolean = false) => {
       setIsLoading(true);
       try {
-        const response = await axios.get<ApiResponse>("/api/get-messages");
-        setMessages(response.data.messages || []);
+        const response = await axios.get<ApiResponse>("/api/get-collections");
+        setCollections(response.data.collections || []);
 
         if (refresh) {
           toast({
-            title: "Refreshed messages",
-            description: "Showing latest messages",
+            title: "Refreshed Collections",
+            description: "Showing all collections",
           });
         }
       } catch (error) {
         const axiosError = error as AxiosError<ApiResponse>;
         toast({
           title: "Error",
-          description: axiosError.response?.data.message || "Failed to fetch messages",
+          description: axiosError.response?.data.message || "Failed to fetch collections",
           variant: "destructive",
         });
       } finally {
         setIsLoading(false);
       }
     },
-    [setIsLoading, setMessages, toast]
+    [setIsLoading, setCollections, toast]
   );
 
   useEffect(() => {
     if (!session || !session.user) return;
-    fetchMessages();
-    fetchAcceptMessage();
-  }, [session, setValue, fetchAcceptMessage, fetchMessages]);
-
-  const handleSwitchToggel = async () => {
-    setIsSwitchLoading(true);
-    try {
-      const response = await axios.post<ApiResponse>("/api/accept-messages", {
-        isAcceptingMessages: acceptMessages,
-      });
-      setValue("acceptMessages", response.data.isAcceptingMessages);
-      toast({
-        title: response.data.message,
-        variant: "destructive",
-      });
-    } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
-      toast({
-        title: "Error",
-        description: axiosError.response?.data.message || "Failed to toggel accept messages",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSwitchLoading(false);
-    }
-  };
+    fetchCollections();
+  }, [session, fetchCollections]);
 
   const username = session?.user.username;
 
-  // TODO: research on how to get url like https://shubhamjangir.in  in different waya
-  const profileUrl = `review.shubhamjangir.in/u/${username}`;
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl);
-    toast({
-      title: "URL Copied",
-    });
+  const createCollection = async () => {
+    try {
+      const response = await axios.post<ApiResponse>("/api/create-collection", { collectionName });
+    } catch (error) {}
   };
   if (!session || !session.user) return <>please login</>;
 
@@ -127,27 +78,21 @@ const Page = () => {
       <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
       <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{" "}
+        <h2 className="text-lg font-semibold mb-2">Create a new Collection</h2>{" "}
         <div className="flex items-center">
           <Input
             type="text"
             className="input input-bordered w-full p-2 mr-2"
-            disabled
-            value={profileUrl}
+            placeholder="Enter new Collection Name"
+            onChange={e => {
+              setCollectionName(e.target.value);
+            }}
+            value={collectionName}
           />
-          <Button onClick={copyToClipboard}>Copy</Button>
+          <Button onClick={createCollection}>Create</Button>
         </div>
       </div>
 
-      <div className="mb-4">
-        <Switch
-          {...register("acceptMessages")}
-          checked={acceptMessages}
-          onCheckedChange={handleSwitchToggel}
-          disabled={isSwitchLoading}
-        />
-        <span className="ml-2">Accept Messages: {acceptMessages ? "On" : "Off"}</span>
-      </div>
       <Separator />
 
       <Button
@@ -155,22 +100,25 @@ const Page = () => {
         variant="outline"
         onClick={e => {
           e.preventDefault();
-          fetchMessages(true);
+          fetchCollections(true);
         }}
       >
         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}
       </Button>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {messages.length > 0 ? (
-          messages.map(message => (
-            <MessageCard
-              key={message._id as string}
-              message={message}
-              onMessageDelete={handleDeleteMessage}
+        {collections.length > 0 ? (
+          collections.map(collection => (
+            <CollectionCard
+              collection={collection}
+              key={collection._id as string}
+              onCollectionDelete={handleDeleteCollection}
+              onClickRedirect={collectionId => {
+                router.replace(`/c/${collectionId}`);
+              }}
             />
           ))
         ) : (
-          <p>No messages yet</p>
+          <p>Create your first collection</p>
         )}
       </div>
     </div>
