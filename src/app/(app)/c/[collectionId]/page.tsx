@@ -55,7 +55,7 @@ const Page = () => {
     } finally {
       setIsSwitchLoading(false);
     }
-  }, [setValue, toast]);
+  }, [setValue, toast, collectionId]);
 
   const fetchMessages = useCallback(
     async (refresh: boolean = false) => {
@@ -83,7 +83,7 @@ const Page = () => {
         setIsLoading(false);
       }
     },
-    [setIsLoading, setMessages, toast]
+    [setIsLoading, setMessages, toast, collectionId]
   );
 
   useEffect(() => {
@@ -94,7 +94,6 @@ const Page = () => {
 
   const handleSwitchToggel = async () => {
     setIsSwitchLoading(true);
-    console.log(acceptMessages);
 
     try {
       const response = await axios.post<ApiResponse>("/api/accept-messages", {
@@ -122,7 +121,6 @@ const Page = () => {
       const response = await axios.post<ApiResponse>("/api/reset-link", {
         collectionId,
       });
-      console.log(response.data.link);
 
       setLink(response.data.link as string);
       toast({

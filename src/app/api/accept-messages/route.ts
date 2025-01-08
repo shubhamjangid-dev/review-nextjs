@@ -59,7 +59,6 @@ export async function POST(request: Request) {
       {
         success: true,
         message: "isAccespingMessages is updated successfully",
-        updatedCollection,
       },
       {
         status: 201,
@@ -117,10 +116,15 @@ export async function GET(request: Request) {
     const currCollection = await CollectionModel.findById(collectionId);
 
     if (!currCollection) {
-      return {
-        success: false,
-        message: "Collection not found",
-      };
+      return Response.json(
+        {
+          success: false,
+          message: "Collection not found",
+        },
+        {
+          status: 200,
+        }
+      );
     }
     return Response.json(
       {

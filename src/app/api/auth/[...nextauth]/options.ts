@@ -46,7 +46,6 @@ export const authOptions: NextAuthOptions = {
             username: user.username,
             email: user.email,
             isVerified: user.isVerified,
-            isAcceptingMessages: user.isAcceptingMessages,
           };
         } catch (error: unknown) {
           console.error("Authentication error:", error);
@@ -61,7 +60,6 @@ export const authOptions: NextAuthOptions = {
         session.user._id = token._id;
         session.user.username = token.username;
         session.user.isVerified = token.isVerified;
-        session.user.isAcceptingMessages = token.isAcceptingMessages;
       }
       return session;
     },
@@ -73,7 +71,6 @@ export const authOptions: NextAuthOptions = {
         token._id = user._id;
         token.username = user.username;
         token.isVerified = user.isVerified;
-        token.isAcceptingMessages = user.isAcceptingMessages;
       }
       return token;
     },
