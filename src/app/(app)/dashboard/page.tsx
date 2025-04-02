@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 const Page = () => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [collectionName, setCollectionName] = useState("");
 
   const { toast } = useToast();
@@ -64,13 +64,34 @@ const Page = () => {
     fetchCollections();
   }, [session, fetchCollections]);
 
+  const createCollection = async () => {
+    setIsCreating(true);
+    try {
+      if (collectionName != "") {
+        const response = await axios.post<ApiResponse>("/api/create-collection", { collectionName });
+        await fetchCollections();
+        setCollectionName("");
+      } else {
+        toast({
+          title: "Error",
+          description: "Collection name cannot be empty",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
+      toast({
+        title: "Error",
+        description: axiosError.response?.data.message || "Failed to create collections",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   const username = session?.user.username;
 
-  const createCollection = async () => {
-    try {
-      const response = await axios.post<ApiResponse>("/api/create-collection", { collectionName });
-    } catch (error) {}
-  };
   if (!session || !session.user) return <>please login</>;
 
   return (
@@ -89,7 +110,7 @@ const Page = () => {
             }}
             value={collectionName}
           />
-          <Button onClick={createCollection}>Create</Button>
+          <Button onClick={createCollection}>{isCreating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create"}</Button>
         </div>
       </div>
 

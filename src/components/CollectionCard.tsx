@@ -29,11 +29,6 @@ const CollectionCard = ({ collection, onCollectionDelete, onClickRedirect }: Col
   const { toast } = useToast();
 
   const handleConfirmDelete = async () => {
-    const response = await axios.delete<ApiResponse>(`/api/delete-collection/${collection._id}`);
-    toast({
-      title: response.data.message,
-    });
-    onCollectionDelete(collection._id as string);
     try {
       const response = await axios.delete<ApiResponse>(`/api/delete-collection/${collection._id}`);
       toast({

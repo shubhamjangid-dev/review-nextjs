@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { User } from "next-auth";
 import { Button } from "./ui/button";
-
+import Image from "next/image";
+import logo from "../app/Logo.jpeg";
 const Navbar = () => {
   const { data: session } = useSession();
 
@@ -14,9 +15,18 @@ const Navbar = () => {
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <a
           href="/dashboard"
-          className="text-xl font-bold mb-4 md:mb-0"
+          className="text-xl font-bold mb-4 md:mb-0 flex items-center"
         >
-          Review
+          <Image
+            src={logo}
+            alt={"review logo"}
+            height={40}
+            width={40}
+            className="mb-[6px]"
+          />
+          <h1 className="text-[#23374c]"> Re</h1>
+          <h1 className="text-[#e69a3f]"> v</h1>
+          <h1 className="text-[#23374c]"> iew</h1>
         </a>
         {session ? (
           <>

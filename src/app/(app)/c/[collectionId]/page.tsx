@@ -141,7 +141,7 @@ const Page = () => {
   const username = session?.user.username;
 
   // TODO: research on how to get url like https://shubhamjangir.in  in different waya
-  const profileUrl = `review.shubhamjangir.in/u/${username}/${collectionName}/accept?token=${link}`;
+  const profileUrl = `review.shubhamjangir.in/u/${username}/${collectionName.replace(/ /g, "%20")}/accept?token=${link}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
