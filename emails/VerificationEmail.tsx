@@ -1,52 +1,58 @@
-import { Html, Head, Font, Preview, Heading, Row, Section, Text, Button } from "@react-email/components";
+import React from "react";
 
 interface VerificationEmailProps {
   username: string;
   otp: string;
 }
 
-export default function VerificationEmail({ username, otp }: VerificationEmailProps) {
+const VerificationEmail: React.FC<VerificationEmailProps> = ({ username, otp }) => {
   return (
-    <Html
-      lang="en"
-      dir="ltr"
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "white",
+        fontFamily: "Arial, sans-serif",
+      }}
     >
-      <Head>
-        <title>Verification Code</title>
-        <Font
-          fontFamily="Roboto"
-          fallbackFontFamily="Verdana"
-          webFont={{
-            url: "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2",
-            format: "woff2",
-          }}
-          fontWeight={400}
-          fontStyle="normal"
-        />
-      </Head>
-      <Preview>Here&apos;s your verification code: {otp}</Preview>
-      <Section>
-        <Row>
-          <Heading as="h2">Hello {username},</Heading>
-        </Row>
-        <Row>
-          <Text>Thank you for registering. Please use the following verification code to complete your registration:</Text>
-        </Row>
-        <Row>
-          <Text>{otp}</Text>
-        </Row>
-        <Row>
-          <Text>If you did not request this code, please ignore this email.</Text>
-        </Row>
-        {/* <Row>
-            <Button
-              href={`http://localhost:3000/verify/${username}`}
-              style={{ color: '#61dafb' }}
-            >
-              Verify here
-            </Button>
-          </Row> */}
-      </Section>
-    </Html>
+      <div
+        style={{
+          maxWidth: "400px",
+          backgroundColor: "white",
+          // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+          borderRadius: "10px",
+          padding: "20px",
+          textAlign: "center",
+          border: "1px solid #ccc",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "28px", fontWeight: "bold" }}>
+          <img
+            src="../src/app/Logo.jpeg"
+            alt="Logo"
+            style={{ height: "50px", marginRight: "5px" }}
+          />
+          <span style={{ color: "#23374c" }}>Re</span>
+          <span style={{ color: "#e69a3f" }}>v</span>
+          <span style={{ color: "#23374c" }}>iew</span>
+        </div>
+        <h2 style={{ fontSize: "24px", fontWeight: "bold", color: "#23374c", marginTop: "10px" }}>Hello {username},</h2>
+        <h3 style={{ fontSize: "20px", fontWeight: "bold", color: "#23374c" }}>Verify your Review sign-up</h3>
+        <p style={{ fontSize: "14px", color: "#666", margin: "15px 0" }}>
+          We have received a sign-up attempt with the following code. Please enter it in the browser window where you started signing up for the Review website.
+        </p>
+        <div style={{ display: "inline-block", fontSize: "24px", fontWeight: "bold", backgroundColor: "#23374c", color: "#e69a3f", padding: "10px 20px", borderRadius: "5px", margin: "15px 0" }}>
+          {otp}
+        </div>
+        <p style={{ fontSize: "12px", color: "#888", marginTop: "10px" }}>If you did not attempt to sign up but received this email, please disregard it. The code will remain active for 5 minutes.</p>
+        <a href={`http://localhost:3000/verify/${username}`}>
+          <button style={{ color: "#61dafb" }}>Click here to verify</button>
+        </a>
+      </div>
+    </div>
   );
-}
+};
+
+export default VerificationEmail;

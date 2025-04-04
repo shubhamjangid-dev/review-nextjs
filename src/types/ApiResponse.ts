@@ -1,4 +1,5 @@
 import { Collection, Message } from "@/model/Collection.model";
+import { Date } from "mongoose";
 
 export interface ApiResponse {
   success: boolean;
@@ -8,4 +9,6 @@ export interface ApiResponse {
   collectionName?: string;
   link?: string;
   collections?: Array<Collection>;
+  expiryOfCode?: Date;
+  isVerified?: boolean;
 }
