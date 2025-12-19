@@ -2,7 +2,6 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-import mongoose from "mongoose";
 import { CollectionModel } from "@/model/Collection.model";
 
 export async function POST(request: Request) {

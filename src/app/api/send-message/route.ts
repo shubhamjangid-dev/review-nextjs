@@ -1,12 +1,11 @@
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/model/User.model";
 import { CollectionModel, Message } from "@/model/Collection.model";
 
 export async function POST(request: Request) {
   await dbConnect();
 
   try {
-    const { username, link, messageContent } = await request.json();
+    const {link, messageContent } = await request.json();
 
     const collection = await CollectionModel.findOne({ messageAcceptingLink: link });
 
