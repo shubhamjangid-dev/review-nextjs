@@ -1,10 +1,10 @@
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User.model";
-import mongoose, { Collection } from "mongoose";
+import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 
-export async function GET(request: Request) {
+export async function GET() {
   await dbConnect();
   const session = await getServerSession(authOptions);
 
@@ -34,8 +34,34 @@ export async function GET(request: Request) {
       {
         $lookup: {
           from: "collections",
-          localField: "collections",
-          foreignField: "_id",
+          let: { collectionIds: "$collections" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$_id", "$$collectionIds"],
+                },
+              },
+            },
+            {
+              $addFields: {
+                unreadMessageCount: {
+                  $size: {
+                    $filter: {
+                      input: "$messages",
+                      as: "msg",
+                      cond: {
+                        $gte: ["$$msg.createdAt", "$lastAccessed"],
+                      },
+                    },
+                  },
+                },
+                messageCount: {
+                  $size: "$messages",
+                },
+              },
+            },
+          ],
           as: "collections",
         },
       },

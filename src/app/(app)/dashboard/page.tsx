@@ -1,24 +1,18 @@
 "use client";
 import { useToast } from "@/hooks/use-toast";
-import { Collection } from "@/model/Collection.model";
-import { acceptMessageSchema } from "@/schamas/acceptMessageSchema";
-import { ApiResponse } from "@/types/ApiResponse";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { ApiResponse, CollectionResponse } from "@/types/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import React, { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Loader2, RefreshCcw } from "lucide-react";
-import MessageCard from "@/components/MessageCard";
 import CollectionCard from "@/components/CollectionCard";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
-  const [collections, setCollections] = useState<Collection[]>([]);
+  const [collections, setCollections] = useState<CollectionResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [collectionName, setCollectionName] = useState("");
@@ -68,7 +62,7 @@ const Page = () => {
     setIsCreating(true);
     try {
       if (collectionName != "") {
-        const response = await axios.post<ApiResponse>("/api/create-collection", { collectionName });
+        await axios.post<ApiResponse>("/api/create-collection", { collectionName });
         await fetchCollections();
         setCollectionName("");
       } else {
@@ -90,7 +84,7 @@ const Page = () => {
     }
   };
 
-  const username = session?.user.username;
+  // const username = session?.user.username;
 
   if (!session || !session.user) return <>please login</>;
 

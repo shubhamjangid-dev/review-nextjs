@@ -1,5 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-import { Collection, CollectionModel } from "@/model/Collection.model";
+import { CollectionModel } from "@/model/Collection.model";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import mongoose from "mongoose";
@@ -45,6 +45,7 @@ export async function POST(request: Request) {
       messageAcceptingLink: Math.random().toString(36).substring(2, 15),
       isAcceptingMessages: true,
       messages: [],
+      lastAccessed: new Date(),
     });
 
     await newCollection.save();

@@ -22,6 +22,7 @@ export interface Collection extends Document {
   messageAcceptingLink: string;
   isAcceptingMessages: boolean;
   messages: Message[];
+  lastAccessed:Date;
 }
 
 const CollectionSchema: Schema<Collection> = new Schema({
@@ -38,6 +39,10 @@ const CollectionSchema: Schema<Collection> = new Schema({
     default: true,
   },
   messages: [MessageSchema],
+  lastAccessed: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const CollectionModel = (mongoose.models.Collection as mongoose.Model<Collection>) || mongoose.model<Collection>("Collection", CollectionSchema);

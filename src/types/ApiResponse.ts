@@ -1,4 +1,4 @@
-import { Collection, Message } from "@/model/Collection.model";
+import { Message } from "@/model/Collection.model";
 import { Date } from "mongoose";
 
 export interface ApiResponse {
@@ -8,7 +8,16 @@ export interface ApiResponse {
   messages?: Array<Message>;
   collectionName?: string;
   link?: string;
-  collections?: Array<Collection>;
+  collections?: Array<CollectionResponse>;
   expiryOfCode?: Date;
   isVerified?: boolean;
+}
+
+export interface CollectionResponse {
+  _id: string;
+  collectionName: string;
+  messageAcceptingLink: string;
+  isAcceptingMessages: boolean;
+  messageCount: number;
+  unreadMessageCount: number;
 }

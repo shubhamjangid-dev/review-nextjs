@@ -5,7 +5,6 @@ import UserModel from "@/model/User.model";
 import mongoose from "mongoose";
 import { CollectionModel } from "@/model/Collection.model";
 
-type reqParams = { params: { collectionId: string } };
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const collectionId = searchParams.get("collectionId");
@@ -92,17 +91,12 @@ export async function GET(request: Request) {
         }
       );
     }
-    // if (!collectionMessages || collectionMessages.length == 0) {
-    //   return Response.json(
-    //     {
-    //       success: false,
-    //       message: "Messages not found 1",
-    //     },
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
+
+    // update last accessed
+    await CollectionModel.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId(collectionId) },
+      { $set: { lastAccessed: Date.now() } }
+    );
 
     return Response.json(
       {
