@@ -1,5 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import UserModel from "@/model/User.model";
 import dbConnect from "@/lib/dbConnect";
@@ -52,8 +53,70 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          email: profile.email,
+        };
+      },
+    }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "credentials") {
+        return true;
+      }
+
+      if (account?.provider === "google") {
+        await dbConnect();
+
+        try {
+          const existingUserByEmail = await UserModel.findOne({ email: user.email });
+
+          if (existingUserByEmail) {
+            if (existingUserByEmail.isVerified) {
+              user._id = existingUserByEmail._id as string;
+              user.username = existingUserByEmail.username;
+              user.isVerified = existingUserByEmail.isVerified;
+
+              return true;
+            } else {
+              existingUserByEmail.isVerified = true;
+              existingUserByEmail.username = user.email?.split("@")[0] + "" + Math.floor(Math.random() * 1000);
+
+              await existingUserByEmail.save();
+
+              user._id = existingUserByEmail._id as string;
+              user.username = existingUserByEmail.username;
+              user.isVerified = true;
+
+              return true;
+            }
+          } else {
+            const hashedPassword = await bcrypt.hash("fff", 10);
+            const username = user.email?.split("@")[0] + "" + Math.floor(Math.random() * 1000);
+
+            const newCreatedUser = await UserModel.create({ email: user.email, username, password: hashedPassword, isVerified: true });
+
+            if (!newCreatedUser) {
+              return false;
+            }
+
+            user._id = newCreatedUser._id as string;
+            user.username = newCreatedUser.username;
+            user.isVerified = true;
+            return true;
+          }
+        } catch (error) {
+          console.error("Authentication error:", error);
+          return false;
+        }
+      }
+      return false;
+    },
     async session({ session, token }) {
       if (token) {
         session.user._id = token._id;

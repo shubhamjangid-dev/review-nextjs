@@ -13,6 +13,7 @@ import { Form, FormField, FormLabel, FormItem, FormMessage } from "@/components/
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { GoogleOAuthButton } from "@/components/GoogleOAuth";
 
 function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,10 +60,14 @@ function Page() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-800">
+    <div className="flex justify-center items-center min-h-screen bg-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Welcome Back to Review</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+            Welcome Back to <span style={{ color: "#23374c" }}>Re</span>
+            <span style={{ color: "#e69a3f" }}>v</span>
+            <span style={{ color: "#23374c" }}>iew</span>
+          </h1>
           <p className="mb-4">Sign in to continue your secret conversations</p>
         </div>
         <Form {...form}>
@@ -117,6 +122,7 @@ function Page() {
             </Button>
           </form>
         </Form>
+        <GoogleOAuthButton text="Sign in with Google" />
         <div className="text-center mt-4">
           <p>
             Create new account?{" "}

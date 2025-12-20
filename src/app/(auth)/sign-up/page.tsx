@@ -15,6 +15,7 @@ import { Form, FormField, FormLabel, FormItem, FormMessage } from "@/components/
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { GoogleOAuthButton } from "@/components/GoogleOAuth";
 
 function Page() {
   const [username, setUsername] = useState("");
@@ -79,10 +80,14 @@ function Page() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-800">
+    <div className="flex justify-center items-center min-h-screen bg-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">Join Review</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
+            Join <span style={{ color: "#23374c" }}>Re</span>
+            <span style={{ color: "#e69a3f" }}>v</span>
+            <span style={{ color: "#23374c" }}>iew</span>
+          </h1>
           <p className="mb-4">Sign up to start your anonymous adventure</p>
         </div>
         <Form {...form}>
@@ -123,7 +128,7 @@ function Page() {
                     name="email"
                     placeholder="Email"
                   />
-                  <p className="text-muted text-gray-400 text-sm px-2">We will send you a verification code</p>
+                  <p className="text-muted text-zinc-500 text-sm px-2">We will send you a verification code</p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -160,6 +165,7 @@ function Page() {
             </Button>
           </form>
         </Form>
+        <GoogleOAuthButton text="Sign up with Google" />
         <div className="text-center mt-4">
           <p>
             Already a member?{" "}
