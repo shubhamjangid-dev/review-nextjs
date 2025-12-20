@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 interface VerificationEmailProps {
@@ -29,8 +30,8 @@ const VerificationEmail: React.FC<VerificationEmailProps> = ({ username, otp }) 
         }}
       >
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", fontSize: "28px", fontWeight: "bold" }}>
-          <img
-            src="../src/app/Logo.jpeg"
+          <Image
+            src="/Logo.jpeg"
             alt="Logo"
             style={{ height: "50px", marginRight: "5px" }}
           />

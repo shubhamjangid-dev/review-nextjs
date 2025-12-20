@@ -5,7 +5,6 @@ import { useSession, signOut } from "next-auth/react";
 import { User } from "next-auth";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import logo from "../app/Logo.jpeg";
 const Navbar = () => {
   const { data: session } = useSession();
 
@@ -18,7 +17,7 @@ const Navbar = () => {
           className="text-xl font-bold flex items-center"
         >
           <Image
-            src={logo}
+            src={"/Logo.jpeg"}
             alt={"review logo"}
             height={40}
             width={40}
