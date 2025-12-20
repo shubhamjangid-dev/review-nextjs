@@ -15,7 +15,13 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { GoogleOAuthButton } from "@/components/GoogleOAuth";
 
-function Page() {
+type PageProps = {
+  searchParams: {
+    username?: string;
+  };
+};
+function Page({ searchParams }: PageProps) {
+  const username = searchParams.username || "";
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { toast } = useToast();
@@ -25,7 +31,7 @@ function Page() {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      identifier: "",
+      identifier: username,
       password: "",
     },
   });
