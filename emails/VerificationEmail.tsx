@@ -48,7 +48,7 @@ const VerificationEmail: React.FC<VerificationEmailProps> = ({ username, otp }) 
           {otp}
         </div>
         <p style={{ fontSize: "12px", color: "#888", marginTop: "10px" }}>If you did not attempt to sign up but received this email, please disregard it. The code will remain active for 5 minutes.</p>
-        <a href={`http://localhost:3000/verify/${username}`}>
+        <a href={`http://shubhamjangir.in/verify/${username}`}>
           <button style={{ color: "#61dafb" }}>Click here to verify</button>
         </a>
       </div>
