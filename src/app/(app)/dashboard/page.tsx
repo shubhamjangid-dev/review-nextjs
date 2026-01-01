@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, RefreshCcw } from "lucide-react";
 import CollectionCard from "@/components/CollectionCard";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const Page = () => {
   const [collections, setCollections] = useState<CollectionResponse[]>([]);
@@ -20,8 +21,7 @@ const Page = () => {
   const { toast } = useToast();
   const router = useRouter();
 
-
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const fetchCollections = useCallback(
     async (refresh: boolean = false) => {
@@ -83,7 +83,28 @@ const Page = () => {
 
   // const username = session?.user.username;
 
-  if (!session || !session.user) return <>please login</>;
+  if (status === "loading") {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+  if (!session || !session.user) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Card className="max-w-md w-full text-center">
+          <CardHeader>
+            <h2 className="text-2xl font-semibold">You&apos;re not logged in 🔒</h2>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">Please sign in to access your dashboard and manage your collections.</p>
+            <Button onClick={() => router.push("/login")}>Go to Login</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="my-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
@@ -118,7 +139,17 @@ const Page = () => {
         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}
       </Button>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {collections.length > 0 ? (
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card
+              key={i}
+              className="space-y-4 p-4"
+            >
+              <div className="h-6 w-3/4 mb-2 rounded bg-gray-200 animate-pulse" />
+              <div className="h-4 w-1/4 rounded bg-gray-200 animate-pulse" />
+            </Card>
+          ))
+        ) : collections.length > 0 ? (
           collections.map(collection => (
             <CollectionCard
               collection={collection}
@@ -129,7 +160,14 @@ const Page = () => {
             />
           ))
         ) : (
-          <p>Create your first collection</p>
+          <Card className="col-span-full text-center py-10">
+            <CardHeader>
+              <h3 className="text-xl font-semibold">No collections yet ✨</h3>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-muted-foreground">Create your first collection to start receiving reviews.</p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

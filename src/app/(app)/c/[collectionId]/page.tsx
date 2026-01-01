@@ -27,6 +27,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
 import { useRouter } from "next/navigation";
 
 const Page = () => {
@@ -62,7 +65,7 @@ const Page = () => {
     }
   };
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
@@ -181,7 +184,30 @@ const Page = () => {
       title: "URL Copied",
     });
   };
-  if (!session || !session.user) return <>please login</>;
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!session || !session.user) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Card className="max-w-md w-full text-center">
+          <CardHeader>
+            <h2 className="text-2xl font-semibold">You&apos;re not logged in 🔒</h2>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">Please sign in to access your dashboard and manage your collections.</p>
+            <Button onClick={() => router.push("/login")}>Go to Login</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="my-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
@@ -251,7 +277,17 @@ const Page = () => {
         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}
       </Button>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {messages.length > 0 ? (
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card
+              key={i}
+              className="space-y-4 p-4"
+            >
+              <div className="h-6 w-3/4 mb-2 rounded bg-gray-200 animate-pulse" />
+              <div className="h-4 w-1/2 rounded bg-gray-200 animate-pulse" />
+            </Card>
+          ))
+        ) : messages.length > 0 ? (
           messages.map(message => (
             <MessageCard
               key={message._id as string}
@@ -261,7 +297,14 @@ const Page = () => {
             />
           ))
         ) : (
-          <p>No messages yet</p>
+          <Card className="col-span-full text-center py-10">
+            <CardHeader>
+              <h3 className="text-xl font-semibold">No messages yet 💬</h3>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Share your link to start receiving anonymous messages.</p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
