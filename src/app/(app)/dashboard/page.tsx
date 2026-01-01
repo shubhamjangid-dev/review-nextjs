@@ -20,9 +20,6 @@ const Page = () => {
   const { toast } = useToast();
   const router = useRouter();
 
-  const handleDeleteCollection = (collectionId: string) => {
-    setCollections(collections.filter(collection => collection._id !== collectionId));
-  };
 
   const { data: session } = useSession();
 
@@ -90,7 +87,7 @@ const Page = () => {
 
   return (
     <div className="my-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
+      <h1 className="text-4xl font-bold mb-4">{session.user.username}&apos;s Dashboard</h1>
 
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-2">Create a new Collection</h2>{" "}
@@ -126,7 +123,6 @@ const Page = () => {
             <CollectionCard
               collection={collection}
               key={collection._id as string}
-              onCollectionDelete={handleDeleteCollection}
               onClickRedirect={collectionId => {
                 router.replace(`/c/${collectionId}`);
               }}
