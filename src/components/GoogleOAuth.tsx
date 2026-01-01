@@ -1,27 +1,13 @@
 import { signIn } from "next-auth/react";
 import { Button } from "./ui/button";
-import { toast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 export const GoogleOAuthButton = ({ text }: { text: string }) => {
-  const router = useRouter();
   return (
     <Button
       variant={"secondary"}
       className="w-full"
-      onClick={async () => {
-        try {
-          const result = await signIn("google");
-          if (result?.ok) {
-            router.push("/dashboard");
-            toast({ title: "Logged in successfully" });
-          }else{
-            toast({ title: "Error logging in", variant: "destructive" });
-          }
-        } catch (error) {
-          console.log(error);
-          toast({ title: "Error logging in", variant: "destructive" });
-        }
+      onClick={() => {
+        signIn("google", { callbackUrl: "/dashboard" });
       }}
     >
       <svg
