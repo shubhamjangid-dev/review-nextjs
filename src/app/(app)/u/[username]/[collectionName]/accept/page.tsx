@@ -140,6 +140,7 @@ const Page = () => {
             <Button
               className="my-4"
               onClick={handelSuggestMessage}
+              disabled={true}
             >
               Suggest Messages
             </Button>
