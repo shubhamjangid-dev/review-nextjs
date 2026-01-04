@@ -44,7 +44,7 @@ const Page = () => {
   const router = useRouter();
 
   const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter(message => message._id !== messageId));
+    setMessages(messages.filter(message => message._id.toString() !== messageId));
   };
 
   const handleDeleteCollection = async () => {
@@ -290,7 +290,7 @@ const Page = () => {
         ) : messages.length > 0 ? (
           messages.map(message => (
             <MessageCard
-              key={message._id as string}
+              key={message._id.toString()}
               message={message}
               onMessageDelete={handleDeleteMessage}
               collectionId={collectionId}
