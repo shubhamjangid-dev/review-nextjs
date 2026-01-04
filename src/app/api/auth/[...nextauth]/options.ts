@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Incorrect Password");
           }
           return {
-            _id: user._id as string,
+            _id: user._id.toString(),
             username: user.username,
             email: user.email,
             isVerified: user.isVerified,
@@ -78,7 +78,7 @@ export const authOptions: NextAuthOptions = {
 
           if (existingUserByEmail) {
             if (existingUserByEmail.isVerified) {
-              user._id = existingUserByEmail._id as string;
+              user._id = existingUserByEmail._id.toString();
               user.username = existingUserByEmail.username;
               user.isVerified = existingUserByEmail.isVerified;
 
@@ -89,7 +89,7 @@ export const authOptions: NextAuthOptions = {
 
               await existingUserByEmail.save();
 
-              user._id = existingUserByEmail._id as string;
+              user._id = existingUserByEmail._id.toString();
               user.username = existingUserByEmail.username;
               user.isVerified = true;
 
@@ -105,7 +105,7 @@ export const authOptions: NextAuthOptions = {
               return false;
             }
 
-            user._id = newCreatedUser._id as string;
+            user._id = newCreatedUser._id.toString();
             user.username = newCreatedUser.username;
             user.isVerified = true;
             return true;

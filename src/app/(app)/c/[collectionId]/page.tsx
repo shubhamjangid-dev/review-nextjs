@@ -156,8 +156,7 @@ const Page = () => {
       const response = await axios.post<ApiResponse>("/api/reset-link", {
         collectionId,
       });
-
-      setLink(response.data.link as string);
+      if (response.data.link) setLink(response.data.link);
       toast({
         title: response.data.message,
         variant: "success",

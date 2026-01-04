@@ -14,9 +14,8 @@ const CollectionCard = ({ collection, onClickRedirect }: CollectionCardProps) =>
   return (
     <Card
       className="cursor-pointer transition-colors duration-200 hover:bg-muted"
-      onClick={e => {
-        const target = e.target as HTMLElement;
-        if (target.tagName != "BUTTON") onClickRedirect(collection._id as string);
+      onClick={() => {
+        onClickRedirect(collection._id);
       }}
     >
       <div className="relative">
