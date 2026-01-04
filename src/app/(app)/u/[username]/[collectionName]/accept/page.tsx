@@ -127,24 +127,24 @@ const Page = () => {
 
       <div className="space-y-4 my-8">
         <div className="space-y-2">
-          {isSuggesting ? (
-            <Button
-              className="my-4"
-              variant={"outline"}
-              disabled
-            >
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Suggesting...
-            </Button>
-          ) : (
-            <Button
-              className="my-4"
-              onClick={handelSuggestMessage}
-              disabled={true}
-            >
-              Suggest Messages
-            </Button>
-          )}
+          <Button
+            className="my-4 flex items-center gap-2 transition-all"
+            variant={isSuggesting ? "outline" : "default"}
+            onClick={handelSuggestMessage}
+            disabled={isSuggesting}
+            aria-busy={isSuggesting}
+          >
+            {isSuggesting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Generating suggestions…</span>
+              </>
+            ) : (
+              <>
+                ✨ <span>Suggest Messages</span>
+              </>
+            )}
+          </Button>
 
           <p>Click on any message below to select it.</p>
         </div>
