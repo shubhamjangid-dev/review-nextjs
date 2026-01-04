@@ -153,19 +153,31 @@ const Page = () => {
           <CardHeader>
             <h3 className="text-xl font-semibold">Messages</h3>
           </CardHeader>
-          <CardContent className="flex flex-col space-y-4">
-            {suggestedMessages.map((message, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                className="mb-2"
-                onClick={() => {
-                  form.setValue("content", message);
-                }}
-              >
-                {message}
-              </Button>
-            ))}
+
+          <CardContent className="flex flex-col space-y-3">
+            {isSuggesting ? (
+              <>
+                {[1, 2, 3].map(i => (
+                  <div
+                    key={i}
+                    className="h-10 w-full rounded-md bg-gray-200 animate-pulse"
+                  />
+                ))}
+              </>
+            ) : suggestedMessages.length > 0 ? (
+              suggestedMessages.map((message, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="justify-start text-left"
+                  onClick={() => form.setValue("content", message)}
+                >
+                  {message}
+                </Button>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">No suggestions yet. Click “Suggest Messages” to generate ideas.</p>
+            )}
           </CardContent>
         </Card>
       </div>
